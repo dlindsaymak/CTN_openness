@@ -16,6 +16,7 @@ library(tidyverse)
 library(Hmisc) #correlations
 library(car) #VIF assumptions & allows type II Anova 
 library(relaimpo) #calculates the R2 & Beta2 for the regression
+library(effectsize) #calculate the Beta2 effect size
 
 #import the clean data set
 data <-
@@ -28,53 +29,86 @@ data <-
 Linear Regression Assumptions 
 
 - Normality of predictors (Shapiro Wilkes test)
-- Consistency of residual variance within predictors (Levene's test)
+     - Use shapiro.test() 
+     - Should be non-significant (there is no skewedness)
 
 
-```{r Openness}
-# Normality of predictors
-# shapiro wilkes test will test for skewedness 
-# shapiro.test() 
-# should be non-significant (there is no skewedness)
-
-# Openness Measure
+```{r Shapiro Wilk}
+#Openness
 shapiro.test(data$openness)
+#non-normal
 
 data %>% 
      ggplot()+
      geom_density(aes(openness))
 
 
-# Le
+#CTN Overall
+shapiro.test(data$CTN_overall)
 
+#CTN Deep
 
+#CTN Experience
 
-```
+#CTN Emotional
 
-
-
-
-
-```{r Homoscedasticity}
-# The residual variance within predictor variables should be constant
-# Levene's Test
+#CTN Presence
 
 ```
-
-If these are violated then we can use Robust Regression methods (Bootstrapping)
 
 # Hypothesis 1 - Positive relationship between trait openness and overall CTN.
 
 ```{r H1 }
 #Linear regression predicting openness from CTN
-#CTN ~ Openness 
+# Openness ~ CTN
+#outcome variable ~ predictor variable
 
 # lm() to run the linear regression
+h1_model <- 
+     lm(openness_z ~ CTN_overall_z, data = data)
 
-# Anova() to calculate the variance accounted for by CTN
 
-# calc.relimpo() to calculate the unique variance & effect size (Beta sq) 
+# Anova() to calculate the F value and significance
+Anova(h1_model)
+
+# summary() to calculate the variance accounted for by the model (in this case the single variable CTN overall)
+summary(h1_model)
+
+#effect size (Beta sq) 
+effectsize(h1_model)
+
+
+#plot relationship
+data %>% 
+     ggplot(aes(x = CTN_overall_z, y = openness_z)) +
+     geom_jitter() +
+     geom_smooth(method = "lm")
 
 
 
 ```
+
+```{r H2}
+# Muiltiple Linear regression predicting openness from all four dimensions of DEEP CTN
+# Openness ~ Deep + Experience + Emotional + Presence
+#outcome variable ~ predictor variables (use + to add additional predictors)
+
+# lm() to run the linear regression
+h2_model <- 
+     lm(openness_z ~ CTN_Deep_z + CTN_Exp_z + CTN_Emo_z + CTN_Pres_z, data = data)
+
+# Anova() to calculate the variance accounted for by CTN
+#use Type II to calcaulte the variance equally among variables (otherwise the model will calculate the variance by the order they are in the model)
+Anova(h2_model, Type = "II")
+
+# calc.relimpo() to calculate the unique variance & effect size (Beta sq) 
+# type = lmg gives teh unique R2 (variance) of each variable in the model
+
+calc.relimp(h2_model, type = "lmg")
+
+# plot effect sizes
+
+# create table
+
+```
+
