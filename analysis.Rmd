@@ -1,0 +1,80 @@
+---
+title: "CTN Openness"
+author: "Deb Lindsay"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+#required packages
+library(tidyverse)
+library(Hmisc) #correlations
+library(car) #VIF assumptions & allows type II Anova 
+library(relaimpo) #calculates the R2 & Beta2 for the regression
+
+#import the clean data set
+data <-
+     read_csv("clean_data.csv")
+
+```
+
+## Assumptions for running regressions
+
+Linear Regression Assumptions 
+
+- Normality of predictors (Shapiro Wilkes test)
+- Consistency of residual variance within predictors (Levene's test)
+
+
+```{r Openness}
+# Normality of predictors
+# shapiro wilkes test will test for skewedness 
+# shapiro.test() 
+# should be non-significant (there is no skewedness)
+
+# Openness Measure
+shapiro.test(data$openness)
+
+data %>% 
+     ggplot()+
+     geom_density(aes(openness))
+
+
+# Le
+
+
+
+```
+
+
+
+
+
+```{r Homoscedasticity}
+# The residual variance within predictor variables should be constant
+# Levene's Test
+
+```
+
+If these are violated then we can use Robust Regression methods (Bootstrapping)
+
+# Hypothesis 1 - Positive relationship between trait openness and overall CTN.
+
+```{r H1 }
+#Linear regression predicting openness from CTN
+#CTN ~ Openness 
+
+# lm() to run the linear regression
+
+# Anova() to calculate the variance accounted for by CTN
+
+# calc.relimpo() to calculate the unique variance & effect size (Beta sq) 
+
+
+
+```
